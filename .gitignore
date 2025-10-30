@@ -1,0 +1,15 @@
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+*.log
+*.tlog
+*.cache
+*.diff
+*.orig
+*.rej
+*.db
+
+.DS_Store
+Thumbs.db
