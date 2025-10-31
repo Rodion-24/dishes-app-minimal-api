@@ -1,5 +1,6 @@
+using AutoMapper;
 using DishesAPI.DbContexts;
-using DishesAPI.Entities;
+using DishesAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,32 +12,34 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
     builder.Configuration["ConnectionStrings:DishesDBConnectionString"]));
 
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
 app.UseHttpsRedirection();
 
-app.MapGet("/dishes", async (DishesDbContext db) =>
+app.MapGet("/dishes", async (DishesDbContext db, IMapper mapper) =>
 {
-    return await db.Dishes.ToListAsync();
+    return mapper.Map<IEnumerable<DishDto>>(await db.Dishes.ToListAsync());
 });
 
-app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext db, Guid dishId) =>
+app.MapGet("/dishes/{dishId:guid}", async (DishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId);
+    return mapper.Map<DishDto>(await db.Dishes.FirstOrDefaultAsync(d => d.Id == dishId));
 });
 
-app.MapGet("/dishes/{dishName}", async (DishesDbContext db, string dishName) =>
+app.MapGet("/dishes/{dishName}", async (DishesDbContext db, IMapper mapper, string dishName) =>
 {
-    return await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName);
+    return mapper.Map<DishDto>(await db.Dishes.FirstOrDefaultAsync(d => d.Name == dishName));
 });
 
-app.MapGet("/dishes/{dishId}/ingredients", async (DishesDbContext db, Guid dishId) =>
+app.MapGet("/dishes/{dishId}/ingredients", async (DishesDbContext db, IMapper mapper, Guid dishId) =>
 {
-    return (await db.Dishes
+    return mapper.Map<IEnumerable<IngredientDto>>((await db.Dishes
         .Include(d => d.Ingredients)
-        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients;
+        .FirstOrDefaultAsync(d => d.Id == dishId))?.Ingredients);
 });
 
 app.Run();
