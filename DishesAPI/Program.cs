@@ -1,3 +1,4 @@
+using System.Net;
 using DishesAPI.DbContexts;
 using DishesAPI.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,14 @@ builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler();
+}
 
 app.UseHttpsRedirection();
 
