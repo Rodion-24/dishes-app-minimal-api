@@ -1,4 +1,5 @@
-﻿using DishesAPI.EndpointHandlers;
+﻿using DishesAPI.EndpointFilters;
+using DishesAPI.EndpointHandlers;
 
 namespace DishesAPI.Extensions;
 
@@ -8,6 +9,11 @@ public static class EndpointRouteBuilderExtensions
     {
         var dishesEndpoints = endpointRouteBuilder.MapGroup("/dishes");
         var dishWithGuidIdEndpoints = dishesEndpoints.MapGroup("/{dishId:guid}");
+        var dishWithGuidIdEndpointsAndLockFilters = endpointRouteBuilder.MapGroup("/dishes/{dishId:guid}")
+            .AddEndpointFilter(new DishIsLockedFilter(
+                new("fd630a57-2352-4731-b25c-db9cc7601b16")))
+            .AddEndpointFilter(new DishIsLockedFilter(
+                new("eacc5169-b2a7-41ad-92c3-dbb1a5e7af06")));
 
         dishesEndpoints.MapGet("", DishesHandlers.GetDishesAsync);
         dishWithGuidIdEndpoints.MapGet("", DishesHandlers.GetDishByIdAsync)
