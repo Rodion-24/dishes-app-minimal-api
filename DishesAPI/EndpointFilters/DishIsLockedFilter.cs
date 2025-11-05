@@ -24,7 +24,7 @@ public class DishIsLockedFilter : IEndpointFilter
         {
             throw new NotSupportedException("This filter is not supported for this scenario.");
         }
-        Console.WriteLine($"DishId: {dishId}");
+
         if (dishId == _lockedDishId)
         {
             return TypedResults.Problem(new()
