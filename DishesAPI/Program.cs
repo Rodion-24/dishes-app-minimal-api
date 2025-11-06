@@ -15,6 +15,8 @@ builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddProblemDetails();
+builder.Services.AddAuthentication().AddBearerToken();
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -24,6 +26,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.RegisterDishesEndpoints();
 app.RegisterIngredientsEndpoints();
