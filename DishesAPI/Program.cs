@@ -15,8 +15,14 @@ builder.Services.AddDbContext<DishesDbContext>(o => o.UseSqlite(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddProblemDetails();
-builder.Services.AddAuthentication().AddBearerToken();
+
+builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization();
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("RequireAdminFromBelgium", policy =>
+        policy
+            .RequireRole("admin")
+            .RequireClaim("country", "Belgium"));
 
 var app = builder.Build();
 
